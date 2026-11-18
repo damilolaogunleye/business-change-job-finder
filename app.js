@@ -6,12 +6,6 @@ function searchJobs() {
         [...document.querySelectorAll('.role:checked')]
         .map(role => role.value);
 
-    const location =
-        document.getElementById('location').value;
-
-    const salary =
-        document.getElementById('salary').value;
-
     currentResults = [];
 
     selectedRoles.forEach(role => {
@@ -19,7 +13,7 @@ function searchJobs() {
         currentResults.push({
             role: role,
             source: 'LinkedIn',
-            url: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}&location=${encodeURIComponent(location)}`
+            url: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}`
         });
 
         currentResults.push({
@@ -43,7 +37,7 @@ function searchJobs() {
         currentResults.push({
             role: role,
             source: 'TotalJobs',
-            url: `https://www.totaljobs.com/jobs/${encodeURIComponent(role.toLowerCase().replaceAll(' ','-'))}`
+            url: `https://www.totaljobs.com/jobs/${encodeURIComponent(role)}`
         });
 
     });
@@ -53,46 +47,46 @@ function searchJobs() {
     document.getElementById('resultsCount').innerText =
         currentResults.length;
 
-    document.getElementById('avgSalary').innerText =
-        `£${Number(salary).toLocaleString()}`;
+    document.getElementById('rolesSelected').innerText =
+        selectedRoles.length;
 }
 
-function buildTable(){
+function buildTable() {
 
-    const table =
+    const tbody =
         document.querySelector('#resultsTable tbody');
 
-    table.innerHTML = '';
+    tbody.innerHTML = '';
 
     currentResults.forEach(item => {
 
-        table.innerHTML += `
-            <tr>
-                <td>${item.role}</td>
-                <td>${item.source}</td>
-                <td>
-                    <a href="${item.url}" target="_blank">
-                        Open Search
-                    </a>
-                </td>
-            </tr>
+        tbody.innerHTML += `
+        <tr>
+            <td>${item.role}</td>
+            <td>${item.source}</td>
+            <td>
+                <a href="${item.url}" target="_blank">
+                    Open Search
+                </a>
+            </td>
+        </tr>
         `;
     });
 }
 
-function exportCSV(){
+function exportCSV() {
 
     let csv = 'Role,Source,URL\n';
 
     currentResults.forEach(job => {
 
         csv +=
-        `${job.role},${job.source},${job.url}\n`;
+            `${job.role},${job.source},${job.url}\n`;
 
     });
 
     const blob =
-        new Blob([csv], {type:'text/csv'});
+        new Blob([csv], { type: 'text/csv' });
 
     const link =
         document.createElement('a');
@@ -105,48 +99,43 @@ function exportCSV(){
 
     link.click();
 }
-function openAllSearches(){
+
+function openAllSearches() {
 
     const selectedRoles =
         [...document.querySelectorAll('.role:checked')]
         .map(role => role.value);
 
-    if(selectedRoles.length === 0){
+    if (selectedRoles.length === 0) {
 
-        alert(
-          'Please select at least one role.'
-        );
-
+        alert('Please select at least one role.');
         return;
-    }
 
-    const keywords =
-        selectedRoles.join(' OR ');
+    }
 
     const location =
         document.getElementById('location').value;
 
+    const searchTerm =
+        selectedRoles.join(' OR ');
+
     const searches = [
 
-        `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(keywords)}&location=${encodeURIComponent(location)}`,
+        `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`,
 
-        `https://uk.indeed.com/jobs?q=${encodeURIComponent(keywords)}`,
+        `https://uk.indeed.com/jobs?q=${encodeURIComponent(searchTerm)}`,
 
-        `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(keywords)}`,
+        `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(searchTerm)}`,
 
-        `https://www.reed.co.uk/jobs/${encodeURIComponent(selectedRoles[0].toLowerCase().replaceAll(' ','-'))}-jobs`,
+        `https://www.reed.co.uk/jobs/business-change-manager-jobs`,
 
-        `https://www.totaljobs.com/jobs/${encodeURIComponent(selectedRoles[0].toLowerCase().replaceAll(' ','-'))}`
+        `https://www.totaljobs.com/jobs/business-change-manager`
 
     ];
 
     searches.forEach(url => {
 
-        window.open(
-            url,
-            '_blank'
-        );
+        window.open(url, '_blank');
 
     });
-
 }
