@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Change Jobs Finder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Business Change & Transformation Jobs Finder</h1>
+        <p>Search UK opportunities across major job boards</p>
+    </header>
+
+    <section class="filters">
+
+        <div class="filter-group">
+            <label>Role Type</label>
+            <select id="jobRole">
+                <option value="Business Change Manager">Business Change Manager</option>
+                <option value="Senior Business Change Manager">Senior Business Change Manager</option>
+                <option value="Change Manager">Change Manager</option>
+                <option value="Transformation Manager">Transformation Manager</option>
+                <option value="Business Transformation Manager">Business Transformation Manager</option>
+                <option value="Change Lead">Change Lead</option>
+                <option value="Head of Change">Head of Change</option>
+                <option value="Head of Transformation">Head of Transformation</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Minimum Salary</label>
+            <input id="salary" type="number" value="50000">
+        </div>
+
+        <div class="filter-group">
+            <label>Location</label>
+            <select id="location">
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Remote">Remote</option>
+                <option value="West Midlands">West Midlands</option>
+                <option value="Birmingham">Birmingham</option>
+                <option value="Dudley">Dudley</option>
+            </select>
+        </div>
+
+    </section>
+
+    <section class="actions">
+        <button onclick="searchJobs()">Search Jobs</button>
+        <button onclick="exportCSV()">Export CSV</button>
+    </section>
+
+    <section class="summary">
+        <div class="card">
+            <h2 id="resultsCount">0</h2>
+            <span>Results</span>
+        </div>
+
+        <div class="card">
+            <h2 id="avgSalary">£0</h2>
+            <span>Average Salary</span>
+        </div>
+    </section>
+
+    <section>
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Source</th>
+                    <th>Search Link</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
