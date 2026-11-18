@@ -107,19 +107,43 @@ function exportCSV(){
 }
 function openAllSearches(){
 
-    if(currentResults.length === 0){
+    const selectedRoles =
+        [...document.querySelectorAll('.role:checked')]
+        .map(role => role.value);
+
+    if(selectedRoles.length === 0){
 
         alert(
-          'Please click Search Jobs first.'
+          'Please select at least one role.'
         );
 
         return;
     }
 
-    currentResults.forEach(job => {
+    const keywords =
+        selectedRoles.join(' OR ');
+
+    const location =
+        document.getElementById('location').value;
+
+    const searches = [
+
+        `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(keywords)}&location=${encodeURIComponent(location)}`,
+
+        `https://uk.indeed.com/jobs?q=${encodeURIComponent(keywords)}`,
+
+        `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(keywords)}`,
+
+        `https://www.reed.co.uk/jobs/${encodeURIComponent(selectedRoles[0].toLowerCase().replaceAll(' ','-'))}-jobs`,
+
+        `https://www.totaljobs.com/jobs/${encodeURIComponent(selectedRoles[0].toLowerCase().replaceAll(' ','-'))}`
+
+    ];
+
+    searches.forEach(url => {
 
         window.open(
-            job.url,
+            url,
             '_blank'
         );
 
