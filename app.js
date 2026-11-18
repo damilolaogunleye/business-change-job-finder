@@ -2,8 +2,9 @@ let currentResults = [];
 
 function searchJobs(){
 
-    const role =
-        document.getElementById('jobRole').value;
+    const selectedRoles =
+        [...document.querySelectorAll('.role:checked')]
+        .map(x => x.value);
 
     const location =
         document.getElementById('location').value;
@@ -11,34 +12,70 @@ function searchJobs(){
     const salary =
         document.getElementById('salary').value;
 
-    currentResults = [
+    currentResults = [];
 
-        {
-            source:'LinkedIn',
-            url:`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}&location=${encodeURIComponent(location)}`
-        },
+    selectedRoles.forEach(role => {
 
-        {
-            source:'Reed',
-            url:`https://www.reed.co.uk/jobs/${encodeURIComponent(role.toLowerCase().replaceAll(' ','-'))}-jobs`
-        },
+        currentResults.push({
 
-        {
-            source:'CV-Library',
-            url:`https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(role)}`
-        },
+            role: role,
+            source: 'LinkedIn',
 
-        {
-            source:'TotalJobs',
-            url:`https://www.totaljobs.com/jobs/${encodeURIComponent(role.toLowerCase().replaceAll(' ','-'))}`
-        },
+            url:
+            `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}&location=${encodeURIComponent(location)}`
 
-        {
-            source:'Indeed',
-            url:`https://uk.indeed.com/jobs?q=${encodeURIComponent(role)}`
-        }
+        });
 
-    ];
+        currentResults.push({
+
+            role: role,
+            source: 'Reed',
+
+            url:
+            `https://www.reed.co.uk/jobs/${role.toLowerCase().replaceAll(' ','-')}-jobs`
+
+        });
+
+        currentResults.push({
+
+            role: role,
+            source: 'CV-Library',
+
+            url:
+            `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(role)}`
+
+        });
+
+        currentResults.push({
+
+            role: role,
+            source: 'Indeed',
+
+            url:
+            `https://uk.indeed.com/jobs?q=${encodeURIComponent(role)}`
+
+        });
+
+        currentResults.push({
+
+            role: role,
+            source: 'TotalJobs',
+
+            url:
+            `https://www.totaljobs.com/jobs/${encodeURIComponent(role.toLowerCase().replaceAll(' ','-'))}`
+
+        });
+
+    });
+
+    document.getElementById('resultsCount').innerText =
+        currentResults.length;
+
+    document.getElementById('avgSalary').innerText =
+        `£${Number(salary).toLocaleString()}`;
+
+    buildTable();
+}
 
     buildTable();
 
@@ -60,7 +97,7 @@ function buildTable(){
 
         table.innerHTML += `
             <tr>
-                <td>${document.getElementById('jobRole').value}</td>
+                <td>${item.role}</td>
                 <td>${item.source}</td>
                 <td>
                     <a href="${item.url}" target="_blank">
