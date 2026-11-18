@@ -105,3 +105,24 @@ function exportCSV(){
 
     link.click();
 }
+function openAllSearches(){
+
+    if(currentResults.length === 0){
+
+        alert(
+          'Please click Search Jobs first.'
+        );
+
+        return;
+    }
+
+    currentResults.forEach(job => {
+
+        window.open(
+            job.url,
+            '_blank'
+        );
+
+    });
+
+}
