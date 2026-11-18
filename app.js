@@ -6,49 +6,50 @@ function searchJobs() {
         [...document.querySelectorAll('.role:checked')]
         .map(role => role.value);
 
-    currentResults = [];
+    const location =
+        document.getElementById('location').value;
 
-    selectedRoles.forEach(role => {
+    currentResults = [
 
-        currentResults.push({
-            role: role,
+        {
             source: 'LinkedIn',
-            url: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}`
-        });
+            roles: selectedRoles.length,
+            url: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(selectedRoles.join(' OR '))}&location=${encodeURIComponent(location)}`
+        },
 
-        currentResults.push({
-            role: role,
+        {
             source: 'Reed',
-            url: `https://www.reed.co.uk/jobs/${role.toLowerCase().replaceAll(' ','-')}-jobs`
-        });
+            roles: selectedRoles.length,
+            url: `https://www.reed.co.uk/jobs/business-change-manager-jobs`
+        },
 
-        currentResults.push({
-            role: role,
+        {
             source: 'CV-Library',
-            url: `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(role)}`
-        });
+            roles: selectedRoles.length,
+            url: `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(selectedRoles.join(' OR '))}`
+        },
 
-        currentResults.push({
-            role: role,
+        {
             source: 'Indeed',
-            url: `https://uk.indeed.com/jobs?q=${encodeURIComponent(role)}`
-        });
+            roles: selectedRoles.length,
+            url: `https://uk.indeed.com/jobs?q=${encodeURIComponent(selectedRoles.join(' OR '))}`
+        },
 
-        currentResults.push({
-            role: role,
+        {
             source: 'TotalJobs',
-            url: `https://www.totaljobs.com/jobs/${encodeURIComponent(role)}`
-        });
+            roles: selectedRoles.length,
+            url: `https://www.totaljobs.com/jobs/business-change-manager`
+        }
 
-    });
+    ];
 
     buildTable();
 
-    document.getElementById('resultsCount').innerText =
-        currentResults.length;
-
     document.getElementById('rolesSelected').innerText =
         selectedRoles.length;
+
+    document.getElementById('resultsCount').innerText =
+        currentResults.length;
 }
 
 function buildTable() {
@@ -62,8 +63,8 @@ function buildTable() {
 
         tbody.innerHTML += `
         <tr>
-            <td>${item.role}</td>
             <td>${item.source}</td>
+            <td>${item.roles} Roles Selected</td>
             <td>
                 <a href="${item.url}" target="_blank">
                     Open Search
@@ -76,17 +77,20 @@ function buildTable() {
 
 function exportCSV() {
 
-    let csv = 'Role,Source,URL\n';
+    let csv =
+        'Job Board,Roles Selected,URL\n';
 
-    currentResults.forEach(job => {
+    currentResults.forEach(item => {
 
         csv +=
-            `${job.role},${job.source},${job.url}\n`;
+            `${item.source},${item.roles},${item.url}\n`;
 
     });
 
     const blob =
-        new Blob([csv], { type: 'text/csv' });
+        new Blob([csv], {
+            type: 'text/csv'
+        });
 
     const link =
         document.createElement('a');
@@ -102,40 +106,20 @@ function exportCSV() {
 
 function openAllSearches() {
 
-    const selectedRoles =
-        [...document.querySelectorAll('.role:checked')]
-        .map(role => role.value);
+    searchJobs();
 
-    if (selectedRoles.length === 0) {
+    currentResults.forEach(item => {
 
-        alert('Please select at least one role.');
-        return;
-
-    }
-
-    const location =
-        document.getElementById('location').value;
-
-    const searchTerm =
-        selectedRoles.join(' OR ');
-
-    const searches = [
-
-        `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(location)}`,
-
-        `https://uk.indeed.com/jobs?q=${encodeURIComponent(searchTerm)}`,
-
-        `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(searchTerm)}`,
-
-        `https://www.reed.co.uk/jobs/business-change-manager-jobs`,
-
-        `https://www.totaljobs.com/jobs/business-change-manager`
-
-    ];
-
-    searches.forEach(url => {
-
-        window.open(url, '_blank');
+        window.open(
+            item.url,
+            '_blank'
+        );
 
     });
 }
+
+window.onload = function() {
+
+    searchJobs();
+
+};
