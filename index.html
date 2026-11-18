@@ -1,71 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Change Jobs Finder</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Change Jobs Finder</title>
+<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
 <div class="container">
 
-    <header>
-        <h1>Business Change & Transformation Jobs Finder</h1>
-        <p>Search UK opportunities across major job boards</p>
-    </header>
+<header>
+    <h1>Business Change & Transformation Jobs Finder</h1>
+    <p>Search UK opportunities across major job boards</p>
+</header>
 
-    <section class="filters">
+<section class="filters">
 
-<div class="filter-group">
-    <label>Roles</label>
+    <div class="filter-group role-panel">
 
-    <div>
-        <input type="checkbox" class="role" value="Business Change Manager" checked>
-        Business Change Manager
+        <label>Roles</label>
+
+        <div><input type="checkbox" class="role" value="Business Change Manager" checked> Business Change Manager</div>
+
+        <div><input type="checkbox" class="role" value="Senior Business Change Manager" checked> Senior Business Change Manager</div>
+
+        <div><input type="checkbox" class="role" value="Change Manager" checked> Change Manager</div>
+
+        <div><input type="checkbox" class="role" value="Transformation Manager" checked> Transformation Manager</div>
+
+        <div><input type="checkbox" class="role" value="Head of Change" checked> Head of Change</div>
+
+        <div><input type="checkbox" class="role" value="Head of Transformation" checked> Head of Transformation</div>
+
     </div>
 
-    <div>
-        <input type="checkbox" class="role" value="Senior Business Change Manager" checked>
-        Senior Business Change Manager
+    <div class="filter-group">
+
+        <label>Minimum Salary</label>
+
+        <input id="salary"
+               type="number"
+               value="50000">
+
     </div>
 
-    <div>
-        <input type="checkbox" class="role" value="Change Manager" checked>
-        Change Manager
+    <div class="filter-group">
+
+        <label>Location</label>
+
+        <select id="location">
+
+            <option value="United Kingdom">
+                United Kingdom
+            </option>
+
+            <option value="Remote">
+                Remote
+            </option>
+
+            <option value="West Midlands">
+                West Midlands
+            </option>
+
+            <option value="Birmingham">
+                Birmingham
+            </option>
+
+            <option value="Dudley">
+                Dudley
+            </option>
+
+        </select>
+
     </div>
 
-    <div>
-        <input type="checkbox" class="role" value="Transformation Manager" checked>
-        Transformation Manager
-    </div>
-
-    <div>
-        <input type="checkbox" class="role" value="Head of Change" checked>
-        Head of Change
-    </div>
-
-    <div>
-        <input type="checkbox" class="role" value="Head of Transformation" checked>
-        Head of Transformation
-    </div>
-</div>
-
-        <div class="filter-group">
-            <label>Minimum Salary</label>
-            <input id="salary" type="number" value="50000">
-        </div>
-
-        <div class="filter-group">
-            <label>Location</label>
-            <select id="location">
-                <option value="United Kingdom">United Kingdom</option>
-                <option value="Remote">Remote</option>
-                <option value="West Midlands">West Midlands</option>
-                <option value="Birmingham">Birmingham</option>
-                <option value="Dudley">Dudley</option>
-            </select>
-        </div>
+</section>
 
 <section class="actions">
 
@@ -83,30 +94,59 @@
 
 </section>
 
-    <section class="summary">
-        <div class="card">
-            <h2 id="resultsCount">0</h2>
-            <span>Results</span>
-        </div>
+<section class="summary">
 
-        <div class="card">
-            <h2 id="avgSalary">£0</h2>
-            <span>Minimum Salary Filter</span>
-        </div>
-    </section>
+    <div class="card">
 
-    <section class="results-section>
-        <table id="resultsTable">
-            <thead>
-                <tr>
-                    <th>Role</th>
-                    <th>Source</th>
-                    <th>Search Link</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </section>
+        <h2 id="rolesSelected">6</h2>
+
+        <span>Roles Selected</span>
+
+    </div>
+
+    <div class="card">
+
+        <h2>5</h2>
+
+        <span>Job Boards</span>
+
+    </div>
+
+    <div class="card">
+
+        <h2 id="resultsCount">0</h2>
+
+        <span>Searches Generated</span>
+
+    </div>
+
+</section>
+
+<section class="results-section">
+
+    <table id="resultsTable">
+
+        <thead>
+
+            <tr>
+
+                <th>Role</th>
+
+                <th>Source</th>
+
+                <th>Search Link</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+</section>
 
 </div>
 
