@@ -1,25 +1,6 @@
 export default async function handler(req, res) {
 
-    // CORS headers
-    res.setHeader(
-        'Access-Control-Allow-Origin',
-        '*'
-    );
-
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET, OPTIONS'
-    );
-
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Content-Type'
-    );
-
-    // Handle browser preflight requests
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     try {
 
@@ -33,6 +14,11 @@ export default async function handler(req, res) {
             req.query.q ||
             'Business Change Manager';
 
+        console.log(
+            'Search Query:',
+            searchQuery
+        );
+
         const response =
             await fetch(
                 `https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=${APP_ID}&app_key=${APP_KEY}&what=${encodeURIComponent(searchQuery)}&results_per_page=20`
@@ -41,9 +27,11 @@ export default async function handler(req, res) {
         const data =
             await response.json();
 
-        return res
-            .status(200)
-            .json(data.results);
+        return res.status(200).json({
+            searchQuery,
+            count: data.results?.length || 0,
+            results: data.results || []
+        });
 
     }
     catch(error){
@@ -53,4 +41,5 @@ export default async function handler(req, res) {
         });
 
     }
+
 }
