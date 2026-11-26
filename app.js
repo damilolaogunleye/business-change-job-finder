@@ -1,55 +1,45 @@
 let currentResults = [];
 
-function searchJobs() {
+async function searchJobs() {
 
     const selectedRoles =
         [...document.querySelectorAll('.role:checked')]
         .map(role => role.value);
 
-    const location =
-        document.getElementById('location').value;
-
-    currentResults = [
-
-        {
-            source: 'LinkedIn',
-            roles: selectedRoles.length,
-            url: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(selectedRoles.join(' OR '))}&location=${encodeURIComponent(location)}`
-        },
-
-        {
-            source: 'Reed',
-            roles: selectedRoles.length,
-            url: `https://www.reed.co.uk/jobs/business-change-manager-jobs`
-        },
-
-        {
-            source: 'CV-Library',
-            roles: selectedRoles.length,
-            url: `https://www.cv-library.co.uk/search-jobs?keywords=${encodeURIComponent(selectedRoles.join(' OR '))}`
-        },
-
-        {
-            source: 'Indeed',
-            roles: selectedRoles.length,
-            url: `https://uk.indeed.com/jobs?q=${encodeURIComponent(selectedRoles.join(' OR '))}`
-        },
-
-        {
-            source: 'TotalJobs',
-            roles: selectedRoles.length,
-            url: `https://www.totaljobs.com/jobs/business-change-manager`
-        }
-
-    ];
-
-    buildTable();
-
-    document.getElementById('rolesSelected').innerText =
-        selectedRoles.length;
-
     document.getElementById('resultsCount').innerText =
-        currentResults.length;
+        '...';
+
+    const searchText =
+        selectedRoles.join(' OR ');
+
+    try {
+
+        const response =
+            await fetch(
+                `https://business-change-job-finder.vercel.app/api/jobs?q=${encodeURIComponent(searchText)}`
+            );
+
+        currentResults =
+            await response.json();
+
+        buildTable();
+
+        document.getElementById('rolesSelected').innerText =
+            selectedRoles.length;
+
+        document.getElementById('resultsCount').innerText =
+            currentResults.length;
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            'Unable to retrieve vacancies.'
+        );
+
+    }
 }
 
 function buildTable() {
@@ -59,15 +49,32 @@ function buildTable() {
 
     tbody.innerHTML = '';
 
-    currentResults.forEach(item => {
+    currentResults.forEach(job => {
+
+        const company =
+            job.company?.display_name ||
+            'Unknown';
+
+        const location =
+            job.location?.display_name ||
+            'Unknown';
+
+        const salary =
+            job.salary_max
+            ? '£' +
+              Math.round(job.salary_max).toLocaleString()
+            : 'Not Specified';
 
         tbody.innerHTML += `
         <tr>
-            <td>${item.source}</td>
-            <td>${item.roles} Roles Selected</td>
+            <td>${job.title}</td>
+            <td>${company}</td>
+            <td>${location}</td>
+            <td>${salary}</td>
             <td>
-                <a href="${item.url}" target="_blank">
-                    Open Search
+                <a href="${job.redirect_url}"
+                   target="_blank">
+                   Apply
                 </a>
             </td>
         </tr>
@@ -78,18 +85,23 @@ function buildTable() {
 function exportCSV() {
 
     let csv =
-        'Job Board,Roles Selected,URL\n';
+        'Title,Company,Location,Salary,Link\n';
 
-    currentResults.forEach(item => {
+    currentResults.forEach(job => {
 
         csv +=
-            `${item.source},${item.roles},${item.url}\n`;
+        `"${job.title}",
+         "${job.company?.display_name}",
+         "${job.location?.display_name}",
+         "${job.salary_max}",
+         "${job.redirect_url}"\n`;
 
     });
 
     const blob =
-        new Blob([csv], {
-            type: 'text/csv'
+        new Blob([csv],
+        {
+            type:'text/csv'
         });
 
     const link =
@@ -99,19 +111,17 @@ function exportCSV() {
         URL.createObjectURL(blob);
 
     link.download =
-        'BusinessChangeJobs.csv';
+        'BusinessChangeVacancies.csv';
 
     link.click();
 }
 
 function openAllSearches() {
 
-    searchJobs();
-
-    currentResults.forEach(item => {
+    currentResults.forEach(job => {
 
         window.open(
-            item.url,
+            job.redirect_url,
             '_blank'
         );
 
