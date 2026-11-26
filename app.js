@@ -6,8 +6,11 @@ async function searchJobs() {
         [...document.querySelectorAll('.role:checked')]
         .map(role => role.value);
 
+    document.getElementById('rolesSelected').innerText =
+        selectedRoles.length;
+
     document.getElementById('resultsCount').innerText =
-        '...';
+        'Loading...';
 
     const searchText =
         selectedRoles.join(' OR ');
@@ -19,13 +22,22 @@ async function searchJobs() {
                 `https://business-change-job-finder.vercel.app/api/jobs?q=${encodeURIComponent(searchText)}`
             );
 
-        currentResults =
+        console.log(
+            'Response status:',
+            response.status
+        );
+
+        const data =
             await response.json();
 
-        buildTable();
+        console.log(
+            'API Data:',
+            data
+        );
 
-        document.getElementById('rolesSelected').innerText =
-            selectedRoles.length;
+        currentResults = data;
+
+        buildTable();
 
         document.getElementById('resultsCount').innerText =
             currentResults.length;
@@ -33,13 +45,20 @@ async function searchJobs() {
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            'Search Error:',
+            error
+        );
+
+        document.getElementById('resultsCount').innerText =
+            '0';
 
         alert(
             'Unable to retrieve vacancies.'
         );
 
     }
+
 }
 
 function buildTable() {
@@ -47,11 +66,35 @@ function buildTable() {
     const tbody =
         document.querySelector('#resultsTable tbody');
 
+    if (!tbody) {
+
+        console.error(
+            'Cannot find table body.'
+        );
+
+        return;
+
+    }
+
     tbody.innerHTML = '';
+
+    if (!Array.isArray(currentResults)) {
+
+        console.error(
+            'currentResults is not an array',
+            currentResults
+        );
+
+        return;
+
+    }
 
     currentResults.forEach(job => {
 
-        const company =
+        const title =
+            job.title || 'No title';
+
+        const employer =
             job.company?.display_name ||
             'Unknown';
 
@@ -62,17 +105,20 @@ function buildTable() {
         const salary =
             job.salary_max
             ? '£' +
-              Math.round(job.salary_max).toLocaleString()
-            : 'Not Specified';
+              Number(job.salary_max).toLocaleString()
+            : 'Not specified';
+
+        const applyUrl =
+            job.redirect_url || '#';
 
         tbody.innerHTML += `
         <tr>
-            <td>${job.title}</td>
-            <td>${company}</td>
+            <td>${title}</td>
+            <td>${employer}</td>
             <td>${location}</td>
             <td>${salary}</td>
             <td>
-                <a href="${job.redirect_url}"
+                <a href="${applyUrl}"
                    target="_blank">
                    Apply
                 </a>
@@ -80,29 +126,41 @@ function buildTable() {
         </tr>
         `;
     });
+
 }
 
 function exportCSV() {
 
+    if (!currentResults.length) {
+
+        alert(
+            'No vacancies available.'
+        );
+
+        return;
+    }
+
     let csv =
-        'Title,Company,Location,Salary,Link\n';
+        'Title,Employer,Location,Salary,Apply URL\n';
 
     currentResults.forEach(job => {
 
         csv +=
-        `"${job.title}",
-         "${job.company?.display_name}",
-         "${job.location?.display_name}",
-         "${job.salary_max}",
-         "${job.redirect_url}"\n`;
+            `"${job.title || ''}",` +
+            `"${job.company?.display_name || ''}",` +
+            `"${job.location?.display_name || ''}",` +
+            `"${job.salary_max || ''}",` +
+            `"${job.redirect_url || ''}"\n`;
 
     });
 
     const blob =
-        new Blob([csv],
-        {
-            type:'text/csv'
-        });
+        new Blob(
+            [csv],
+            {
+                type: 'text/csv'
+            }
+        );
 
     const link =
         document.createElement('a');
@@ -118,17 +176,31 @@ function exportCSV() {
 
 function openAllSearches() {
 
-    currentResults.forEach(job => {
+    if (!currentResults.length) {
 
-        window.open(
-            job.redirect_url,
-            '_blank'
+        alert(
+            'No vacancies available.'
         );
 
+        return;
+    }
+
+    currentResults.forEach(job => {
+
+        if (job.redirect_url) {
+
+            window.open(
+                job.redirect_url,
+                '_blank'
+            );
+
+        }
+
     });
+
 }
 
-window.onload = function() {
+window.onload = () => {
 
     searchJobs();
 
