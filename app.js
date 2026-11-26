@@ -2,24 +2,14 @@ let currentResults = [];
 
 async function searchJobs() {
 
-    const selectedRoles =
-        [...document.querySelectorAll('.role:checked')]
-        .map(role => role.value);
-
-    document.getElementById('rolesSelected').innerText =
-        selectedRoles.length;
-
     document.getElementById('resultsCount').innerText =
         'Loading...';
-
-    const searchText =
-        selectedRoles.join(' OR ');
 
     try {
 
         const response =
             await fetch(
-                `https://business-change-job-finder.vercel.app/api/jobs?q=${encodeURIComponent(searchText)}`
+                'https://business-change-job-finder.vercel.app/api/jobs'
             );
 
         console.log(
@@ -38,6 +28,9 @@ async function searchJobs() {
         currentResults = data;
 
         buildTable();
+
+        document.getElementById('rolesSelected').innerText =
+            document.querySelectorAll('.role:checked').length;
 
         document.getElementById('resultsCount').innerText =
             currentResults.length;
@@ -69,11 +62,10 @@ function buildTable() {
     if (!tbody) {
 
         console.error(
-            'Cannot find table body.'
+            'Table body not found.'
         );
 
         return;
-
     }
 
     tbody.innerHTML = '';
@@ -86,7 +78,6 @@ function buildTable() {
         );
 
         return;
-
     }
 
     currentResults.forEach(job => {
@@ -104,9 +95,8 @@ function buildTable() {
 
         const salary =
             job.salary_max
-            ? '£' +
-              Number(job.salary_max).toLocaleString()
-            : 'Not specified';
+                ? '£' + Number(job.salary_max).toLocaleString()
+                : 'Not specified';
 
         const applyUrl =
             job.redirect_url || '#';
@@ -131,17 +121,17 @@ function buildTable() {
 
 function exportCSV() {
 
-    if (!currentResults.length) {
+    if (currentResults.length === 0) {
 
         alert(
-            'No vacancies available.'
+            'No vacancies available to export.'
         );
 
         return;
     }
 
     let csv =
-        'Title,Employer,Location,Salary,Apply URL\n';
+        'Job Title,Employer,Location,Salary,Apply URL\n';
 
     currentResults.forEach(job => {
 
@@ -157,9 +147,7 @@ function exportCSV() {
     const blob =
         new Blob(
             [csv],
-            {
-                type: 'text/csv'
-            }
+            { type: 'text/csv' }
         );
 
     const link =
@@ -176,7 +164,7 @@ function exportCSV() {
 
 function openAllSearches() {
 
-    if (!currentResults.length) {
+    if (currentResults.length === 0) {
 
         alert(
             'No vacancies available.'
@@ -200,7 +188,7 @@ function openAllSearches() {
 
 }
 
-window.onload = () => {
+window.onload = function () {
 
     searchJobs();
 
