@@ -1,5 +1,26 @@
 export default async function handler(req, res) {
 
+    // CORS headers
+    res.setHeader(
+        'Access-Control-Allow-Origin',
+        '*'
+    );
+
+    res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET, OPTIONS'
+    );
+
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type'
+    );
+
+    // Handle browser preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     try {
 
         const APP_ID =
@@ -10,7 +31,7 @@ export default async function handler(req, res) {
 
         const searchQuery =
             req.query.q ||
-            "Business Change Manager";
+            'Business Change Manager';
 
         const response =
             await fetch(
@@ -20,17 +41,16 @@ export default async function handler(req, res) {
         const data =
             await response.json();
 
-        res.status(200).json(
-            data.results
-        );
+        return res
+            .status(200)
+            .json(data.results);
 
     }
     catch(error){
 
-        res.status(500).json({
+        return res.status(500).json({
             error: error.message
         });
 
     }
-
 }
